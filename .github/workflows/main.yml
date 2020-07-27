@@ -24,3 +24,29 @@ jobs:
           git clone --recursive https://github.com/dmlc/xgboost; cd xgboost;make -j$(nproc);cd python-package; python setup.py install;
           cp -rf /var/lang/lib/python3.8/site-packages/xgboost/ /var/export/xgboost
         name: Build XGBoost
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          zip /var/export/xgboost ./xgboost_layer.zip
+        name: Zip layer
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            newest Layer version
+          draft: false
+          prerelease: false
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} 
+          asset_path: ./xgboost_layer.zip
+          asset_name: xgboost_layer.zip
+          asset_content_type: application/zip
