@@ -23,6 +23,7 @@ jobs:
           cp -rf /var/lang/lib/python3.8/site-packages/xgboost/ /var/export/xgboost
           zip xgboost_layer.zip /var/export/xgboost 
       - name: Create Release
+        id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
