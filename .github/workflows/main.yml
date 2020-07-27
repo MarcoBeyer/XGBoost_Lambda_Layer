@@ -13,12 +13,14 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: marcobeyer/lambda-cmake-buildenv
+      volumes: 
+        - /var/export/:/var/export/
     steps:
       - run: |
           git clone --recursive https://github.com/dmlc/xgboost; cd xgboost;make -j$(nproc);cd python-package; python setup.py install;
           mkdir -p /var/export/xgboost
           cp -rf /var/lang/lib/python3.8/site-packages/xgboost/ /var/export/xgboost
-          zip xgboost_layer.zip /var/export/xgboost 
+          zip /var/export/xgboost_layer.zip /var/export/xgboost 
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -37,6 +39,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} 
-          asset_path: xgboost_layer.zip
+          asset_path: /var/export/xgboost_layer.zip
           asset_name: xgboost_layer.zip
           asset_content_type: application/zip
