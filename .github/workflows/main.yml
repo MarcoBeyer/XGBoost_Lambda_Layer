@@ -20,7 +20,8 @@ jobs:
           git clone --recursive https://github.com/dmlc/xgboost; cd xgboost;make -j$(nproc);cd python-package; python setup.py install;
           mkdir -p /var/export/xgboost
           cp -rf /var/lang/lib/python3.8/site-packages/xgboost/ /var/export/xgboost
-          zip -r /var/export/xgboost_layer.zip /var/export/*
+          cd /var/export/
+          zip -r /var/export/xgboost_layer.zip xgboost
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
